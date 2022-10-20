@@ -10,9 +10,10 @@ import LoadingComponent from './LoadingComponents';
 
 function App() {
   const [activities, setActivities] = useState<Activity[]>([]);
-  const [selectActivity, setSelectedActivity] = useState<Activity | undefined>(undefined);
+  const [selectedActivity, setSelectedActivity] = useState<Activity | undefined>(undefined);
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     agent.Activities.list().then(response => {
@@ -21,7 +22,8 @@ function App() {
         activity.date = activity.date.split('T')[0];
         activities.push(activity);
       })
-      setActivities(response);
+      setActivities(activities);
+      setLoading(false);
     })
   }, [])
 
@@ -43,15 +45,31 @@ function App() {
   }
 
   function handleDeteleActivity(id: string) {
-    setActivities([...activities.filter(x => x.id !== id)])
+    setSubmitting(true);
+    agent.Activities.delete(id).then(() => {
+      setActivities([...activities.filter(x => x.id !== id)]);
+      setSubmitting(false);
+    })
   }
 
   function handleCreateOrEditActivity(activity: Activity) {
-    activity.id 
-      ? setActivities([...activities.filter(x => x.id !== activity.id), activity])
-      : setActivities([...activities, {...activity, id: uuidv4()}]);
-    setEditMode(false);
-    setSelectedActivity(activity);
+    setSubmitting(true);
+    if(activity.id) {
+      agent.Activities.update(activity).then(() => {
+        setActivities([...activities.filter(x => x.id !== activity.id), activity])
+        setEditMode(false);
+        setSelectedActivity(activity);
+        setSubmitting(false);
+      })
+    } else {
+      activity.id = uuidv4();
+      agent.Activities.create(activity).then(() => {
+        setActivities([...activities, activity]);
+        setEditMode(false);
+        setSelectedActivity(activity);
+        setSubmitting(false);
+      })
+    }
   }
 
   if (loading) return <LoadingComponent content='Loading Reactivities..' />
@@ -62,7 +80,7 @@ function App() {
       <Container style={{ marginTop: '7em'}}>
         <ActivityDashboard 
           activities={activities}
-          selectedActivity={selectActivity}
+          selectedActivity={selectedActivity}
           selectActivity={handleSelectActivity}
           cancelSelectActivity={handleCancelSelectActivity}
           editMode={editMode}
@@ -70,6 +88,7 @@ function App() {
           closeForm={handleFormClose}
           createOrEdit={handleCreateOrEditActivity}
           deleteActivity={handleDeteleActivity}
+          submitting={submitting}
           />
       </Container>
       </>
