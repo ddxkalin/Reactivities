@@ -1,20 +1,27 @@
 import { useEffect, useState } from 'react';
 import './styles.css';
-import  axios from 'axios';
 import { Container } from 'semantic-ui-react';
 import { Activity } from '../models/activity';
 import NavBar from './NavBar';
 import ActivityDashboard from '../../features/activities/dashboard/ActivityDashboard';
 import { v4 as uuidv4 } from 'uuid';
+import agent from '../api/agent';
+import LoadingComponent from './LoadingComponents';
 
 function App() {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [selectActivity, setSelectedActivity] = useState<Activity | undefined>(undefined);
   const [editMode, setEditMode] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get<Activity[]>('http://localhost:5000/api/activities').then(response => {
-      setActivities(response.data);
+    agent.Activities.list().then(response => {
+      let activities: Activity[] = [];
+      response.forEach(activity => {
+        activity.date = activity.date.split('T')[0];
+        activities.push(activity);
+      })
+      setActivities(response);
     })
   }, [])
 
@@ -46,6 +53,8 @@ function App() {
     setEditMode(false);
     setSelectedActivity(activity);
   }
+
+  if (loading) return <LoadingComponent content='Loading Reactivities..' />
 
   return (
     <>
