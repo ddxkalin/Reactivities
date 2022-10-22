@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import agent from '../api/agent';
 import LoadingComponent from './LoadingComponents';
 import { useStore } from '../stores/store';
+import { observer } from 'mobx-react-lite';
 
 function App() {
   const {activityStore} = useStore();
@@ -15,20 +16,11 @@ function App() {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [selectedActivity, setSelectedActivity] = useState<Activity | undefined>(undefined);
   const [editMode, setEditMode] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    agent.Activities.list().then(response => {
-      let activities: Activity[] = [];
-      response.forEach(activity => {
-        activity.date = activity.date.split('T')[0];
-        activities.push(activity);
-      })
-      setActivities(activities);
-      setLoading(false);
-    })
-  }, [])
+    activityStore.loadActivities();
+  }, [activityStore])
 
   function handleSelectActivity(id: string) {
     setSelectedActivity(activities.find(x => x.id === id));
@@ -40,11 +32,11 @@ function App() {
 
   function handleFormOpen(id?: string) {
     id ? handleSelectActivity(id) : handleCancelSelectActivity();
-    setEditMode(true);
+    activityStore.openForm(id);
   }
 
   function handleFormClose() {
-    setEditMode(false);
+    activityStore.closeFrom();
   }
 
   function handleDeteleActivity(id: string) {
@@ -60,7 +52,7 @@ function App() {
     if(activity.id) {
       agent.Activities.update(activity).then(() => {
         setActivities([...activities.filter(x => x.id !== activity.id), activity])
-        setEditMode(false);
+        activityStore.closeFrom();
         setSelectedActivity(activity);
         setSubmitting(false);
       })
@@ -68,29 +60,21 @@ function App() {
       activity.id = uuidv4();
       agent.Activities.create(activity).then(() => {
         setActivities([...activities, activity]);
-        setEditMode(false);
+        activityStore.closeFrom();
         setSelectedActivity(activity);
         setSubmitting(false);
       })
     }
   }
 
-  if (loading) return <LoadingComponent content='Loading Reactivities..' />
+  if (activityStore.loadingInitial) return <LoadingComponent content='Loading Reactivities..' />
 
   return (
     <>
-      <NavBar openForm={handleFormOpen}/>
+      <NavBar />
       <Container style={{ marginTop: '7em'}}>
-        {/* <h2>{activityStore.title}</h2> */}
-        
         <ActivityDashboard 
-          activities={activities}
-          selectedActivity={selectedActivity}
-          selectActivity={handleSelectActivity}
-          cancelSelectActivity={handleCancelSelectActivity}
-          editMode={editMode}
-          openForm={handleFormOpen}
-          closeForm={handleFormClose}
+          activities={activityStore.activities}
           createOrEdit={handleCreateOrEditActivity}
           deleteActivity={handleDeteleActivity}
           submitting={submitting}
@@ -100,4 +84,4 @@ function App() {
   );
 }
 
-export default App;
+export default observer(App);
