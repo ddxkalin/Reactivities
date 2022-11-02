@@ -3,8 +3,8 @@ import ActivityStore from "./activityStore";
 import CommonStore from "./commonStore";
 
 interface Store {
-    activityStore: ActivityStore
-    commonStore: CommonStore
+    activityStore: ActivityStore;
+    commonStore: CommonStore;
 }
 
 export const store: Store = {

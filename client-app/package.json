@@ -15,6 +15,7 @@
     "@types/react-router-dom": "^5.3.2",
     "and": "^0.0.3",
     "axios": "^0.21.2",
+    "formik": "^2.2.9",
     "history": "^4.10.1",
     "installed": "^3.3.1",
     "mobx": "^6.6.2",
