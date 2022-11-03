@@ -1,13 +1,14 @@
 import { makeAutoObservable, runInAction } from "mobx"
 import agent from "../api/agent";
 import { Activity } from "../models/activity";
+import {format} from 'date-fns';
 
 export default class ActivityStore {
     activityRegistry = new Map<string, Activity>();
     selectedActivity: Activity | undefined = undefined;
     editMode = false;
     loading = false;
-    loadingInitial = true;
+    loadingInitial = false;
 
     constructor() {
         makeAutoObservable(this)
@@ -15,13 +16,13 @@ export default class ActivityStore {
 
     get activitiesByDate() {
         return Array.from(this.activityRegistry.values()).sort((a, b) => 
-            Date.parse(a.date) - Date.parse(b.date));
+            a.date!.getTime() - b.date!.getTime());
     }
 
     get groupedActivities() {
         return Object.entries(
             this.activitiesByDate.reduce((activities, activity) => {
-                const date = activity.date;
+                const date = format(activity.date!, 'dd MMM yyyy');
                 activities[date] = activities[date] ?  [...activities[date], activity] : [activity]
                 return activities;
             }, {} as {[key: string]: Activity[]})
@@ -29,7 +30,7 @@ export default class ActivityStore {
     }
 
     loadActivities = async () => {
-        this.loadingInitial = false;
+        this.loadingInitial = true;
         try {
             const activities = await agent.Activities.list();
             runInAction(() => {
@@ -70,7 +71,7 @@ export default class ActivityStore {
     }
 
     private setActivity = (activity: Activity) => {
-        activity.date = activity.date.split('T')[0];
+        activity.date = new Date(activity.date!);
         this.activityRegistry.set(activity.id, activity);
     }
 
@@ -83,7 +84,7 @@ export default class ActivityStore {
     }
 
     createActivity = async (activity: Activity) => {
-        this.loading = false;
+        this.loading = true;
         try {
             await agent.Activities.create(activity);
             runInAction(() => {
@@ -101,7 +102,7 @@ export default class ActivityStore {
     }
 
     updateActivity = async (activity: Activity) => {
-        this.loading = false;
+        this.loading = true;
         try {
             await agent.Activities.update(activity);
             runInAction(() => {
