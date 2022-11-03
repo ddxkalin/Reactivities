@@ -9,7 +9,6 @@ export default function ValidationErrors({errors}: Props) {
         <Message error>
             {errors && (
                 <Message.List>
-                    console.log(error);
                     {errors.map((err: any, i) => (
                         <Message.Item key={i}>{err}</Message.Item>
                     ))}

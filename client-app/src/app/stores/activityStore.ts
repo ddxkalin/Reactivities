@@ -29,7 +29,7 @@ export default class ActivityStore {
     }
 
     loadActivities = async () => {
-        this.loadingInitial = true;
+        this.loadingInitial = false;
         try {
             const activities = await agent.Activities.list();
             runInAction(() => {
@@ -49,10 +49,11 @@ export default class ActivityStore {
     loadActivity = async (id: string) => {
         let activity = this.getActivity(id);
         if (activity) {
+            this.loadingInitial = false;
             this.selectedActivity = activity;
             return activity;
         } else {
-            this.loadingInitial = true;
+            this.loadingInitial = false;
             try {
                 activity = await agent.Activities.details(id);
                 this.setActivity(activity);
@@ -82,7 +83,7 @@ export default class ActivityStore {
     }
 
     createActivity = async (activity: Activity) => {
-        this.loading = true;
+        this.loading = false;
         try {
             await agent.Activities.create(activity);
             runInAction(() => {
@@ -100,7 +101,7 @@ export default class ActivityStore {
     }
 
     updateActivity = async (activity: Activity) => {
-        this.loading = true;
+        this.loading = false;
         try {
             await agent.Activities.update(activity);
             runInAction(() => {
