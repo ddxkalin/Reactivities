@@ -15,6 +15,7 @@ import LoginForm from '../../features/users/LoginForm';
 import { useStore } from '../stores/store';
 import { useEffect } from 'react';
 import LoadingComponent from './LoadingComponents';
+import ModalConteiner from '../common/modals/ModalConteiner';
 
 function App() {
   const location = useLocation();
@@ -33,6 +34,7 @@ function App() {
   return (
     <>
       <ToastContainer position='bottom-right' hideProgressBar/>
+      <ModalConteiner />
       <Route exact path='/' component={HomePage} />
       <Route
         path={'/(.+)'}
