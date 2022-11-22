@@ -10,8 +10,8 @@ export default function HomePage() {
                     Reactivities
                 </Header>
                 <Header as='h2' inverted content='Welcome to reactivities' />
-                <Button as={Link} to='/activities' size='huge' inverted>
-                    Take me to Activities!
+                <Button as={Link} to='/login' size='huge' inverted>
+                    Take me to Login!
                 </Button>
             </Container>
         </Segment>

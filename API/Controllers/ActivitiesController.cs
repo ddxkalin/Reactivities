@@ -2,8 +2,10 @@ namespace API.Controllers
 {
     using Application.Activities;
     using Domain;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
+    [AllowAnonymous]
     public class ActivitiesController : BaseApiController
     {    
         [HttpGet]
