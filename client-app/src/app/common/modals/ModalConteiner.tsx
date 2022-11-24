@@ -10,7 +10,6 @@ export default observer (function ModalConteiner() {
             <Modal.Content>
                 {modalStore.modal.body}
             </Modal.Content>
-
         </Modal>
     )
 })

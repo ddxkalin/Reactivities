@@ -17,9 +17,8 @@ namespace API.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly TokenService _tokenService;
-
         public AccountController(UserManager<AppUser> userManager,
-            SignInManager<AppUser> signInManager, TokenService tokenService)
+        SignInManager<AppUser> signInManager, TokenService tokenService)
         {
             _tokenService = tokenService;
             _signInManager = signInManager;
@@ -27,18 +26,18 @@ namespace API.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<UserDTO>> Login(LoginDTO loginDto) 
+        public async Task<ActionResult<UserDTO>> Login(LoginDTO loginDto)
         {
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
 
-            if(user == null) return Unauthorized();
+            if (user == null) return Unauthorized();
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
 
-            if(result.Succeeded)
+            if (result.Succeeded)
             {
-                CreateUserObject(user);
-            } 
+                return CreateUserObject(user);
+            }
 
             return Unauthorized();
         }
@@ -48,13 +47,11 @@ namespace API.Controllers
         {
             if (await _userManager.Users.AnyAsync(x => x.Email == registerDto.Email))
             {
-                ModelState.AddModelError("email", "Email Taken!");
-                return ValidationProblem();
+                return BadRequest("Email taken");
             }
             if (await _userManager.Users.AnyAsync(x => x.UserName == registerDto.Username))
             {
-                ModelState.AddModelError("username", "Username Taken!");
-                return ValidationProblem();
+                return BadRequest("Username taken");
             }
 
             var user = new AppUser
@@ -66,12 +63,12 @@ namespace API.Controllers
 
             var result = await _userManager.CreateAsync(user, registerDto.Password);
 
-            if(result.Succeeded)
+            if (result.Succeeded)
             {
-                CreateUserObject(user);
+                return CreateUserObject(user);
             }
 
-            return BadRequest("Problem registering user!");
+            return BadRequest("Problem registering user");
         }
 
         [Authorize]

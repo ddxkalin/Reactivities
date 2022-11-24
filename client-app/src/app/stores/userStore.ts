@@ -7,13 +7,12 @@ import { store } from "./store";
 export default class UserStore {
     user: User | null = null;
 
-    
     constructor() {
-        makeAutoObservable(this);
+        makeAutoObservable(this)
     }
 
     get isLoggedIn() {
-        return !! this.user
+        return !!this.user;
     }
 
     login = async (creds: UserFormValues) => {
@@ -21,7 +20,7 @@ export default class UserStore {
             const user = await agent.Account.login(creds);
             store.commonStore.setToken(user.token);
             runInAction(() => this.user = user);
-            history.push("/activities");
+            history.push('/activities');
             store.modalStore.closeModal();
         } catch (error) {
             throw error;
@@ -38,18 +37,18 @@ export default class UserStore {
     getUser = async () => {
         try {
             const user = await agent.Account.current();
-            runInAction(() => this.user = user)
+            runInAction(() => this.user = user);
         } catch (error) {
             console.log(error);
         }
     }
 
-    register = async (creds:UserFormValues) => {
+    register = async (creds: UserFormValues) => {
         try {
             const user = await agent.Account.register(creds);
             store.commonStore.setToken(user.token);
             runInAction(() => this.user = user);
-            history.push("/activities");
+            history.push('/activities');
             store.modalStore.closeModal();
         } catch (error) {
             throw error;

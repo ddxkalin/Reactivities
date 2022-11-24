@@ -22,14 +22,14 @@ function App() {
   const {commonStore, userStore} = useStore();
 
   useEffect(() => {
-    if (commonStore.token){
+    if (commonStore.token) {
       userStore.getUser().finally(() => commonStore.setAppLoaded());
     } else {
       commonStore.setAppLoaded();
     }
   }, [commonStore, userStore])
 
-  if(!commonStore.appLoaded) return <LoadingComponent content='Loading App...' />
+  if (!commonStore.appLoaded) return <LoadingComponent content='Loading app...' />
   
   return (
     <>
