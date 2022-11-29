@@ -5,6 +5,7 @@ namespace API.Extensions
     using Application.Interfaces;
     using Infrastructure.Photos;
     using Infrastructure.Security;
+    using Infrastucture.Photos;
     using MediatR;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.OpenApi.Models;
@@ -32,6 +33,7 @@ namespace API.Extensions
             services.AddMediatR(typeof(List.Handler).Assembly);
             services.AddAutoMapper(typeof(MappingProfiles));
             services.AddScoped<IUserAccessor, UserAccessor>();
+            services.AddScoped<IPhotoAccessor, PhotoAccessor>();
             services.Configure<CloudinarySettings>(config.GetSection("Cloudinary"));
 
             return services;
