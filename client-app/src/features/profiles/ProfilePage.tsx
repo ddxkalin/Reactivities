@@ -1,4 +1,3 @@
-import { observable } from "mobx";
 import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
@@ -23,8 +22,10 @@ export default observer(function ProfilePage() {
         <Grid>
             <Grid.Column width={16}>
                 {profile && 
-                <ProfileHeader profile={profile} />}
-                <ProfileContent />
+                <>
+                    <ProfileHeader profile={profile} />
+                    <ProfileContent profile={profile} />
+                </>}
             </Grid.Column>
         </Grid>
     )
