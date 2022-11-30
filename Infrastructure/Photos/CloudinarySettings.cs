@@ -4,6 +4,6 @@ namespace Infrastructure.Photos
     {
         public string CloudName { get; set; }
         public string ApiKey { get; set; }
-        public string ApiSecrets { get; set; }
+        public string ApiSecret { get; set; }
     }
 }
