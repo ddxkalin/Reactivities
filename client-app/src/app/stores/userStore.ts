@@ -19,6 +19,10 @@ export default class UserStore {
         if (this.user) this.user.image = image;
     }
 
+    setDisplayName = (name: string) => {
+        if (this.user) this.user.displayName = name;
+    }
+
     login = async (creds: UserFormValues) => {
         try {
             const user = await agent.Account.login(creds);
