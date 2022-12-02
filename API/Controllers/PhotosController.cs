@@ -3,7 +3,7 @@ namespace API.Controllers
     using Application.Photos;
     using Microsoft.AspNetCore.Mvc;
 
-    public class PhotosContoller : BaseApiController
+    public class PhotosController : BaseApiController
     {
         [HttpPost]
         public async Task<IActionResult> Add([FromForm] Add.Command command)
