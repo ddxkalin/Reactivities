@@ -1,15 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Application.Core;
-using Application.Interfaces;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Persistence;
-
 namespace Application.Followers
 {
+    using Application.Core;
+    using Application.Interfaces;
+    using Domain;
+    using MediatR;
+    using Microsoft.EntityFrameworkCore;
+    using Persistence;
+
     public class FollowToggle
     {
         public class Command : IRequest<Result<Unit>>
@@ -21,11 +18,11 @@ namespace Application.Followers
         {
             private readonly DataContext _context;
             private readonly IUserAccessor _userAccessor;
-            
+
             public Handler(DataContext context, IUserAccessor userAccessor)
             {
+                _userAccessor = userAccessor; 
                 _context = context;
-                _userAccessor = userAccessor;
             }
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
@@ -42,7 +39,7 @@ namespace Application.Followers
 
                 if (following == null)
                 {
-                    following = new Domain.UserFollowing
+                    following = new UserFollowing
                     {
                         Observer = observer,
                         Target = target
@@ -50,14 +47,14 @@ namespace Application.Followers
 
                     _context.UserFollowings.Add(following);
                 }
-                else 
+                else
                 {
                     _context.UserFollowings.Remove(following);
                 }
 
-                var succes = await _context.SaveChangesAsync() > 0;
+                var success = await _context.SaveChangesAsync() > 0;
 
-                if(succes) return Result<Unit>.Success(Unit.Value);
+                if (success) return Result<Unit>.Success(Unit.Value);
 
                 return Result<Unit>.Failure("Failed to update following");
             }
