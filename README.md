@@ -14,3 +14,33 @@ View a demo of this app [here](https://reactivitiesbg.fly.dev/).   You just need
 1. React, MobX, Axios, Semantic-UI, TypeScript, Final-Form, Revalidate, React-Toastify.
 2. C# (ASP.NET), SignalR, PostgreSQL(Entity Framework), Cloudinary.
 
+## Install Packages
+
+Run the command within the project directory to install packages from the project dependencies
+
+```
+$ cd ../Reactivities
+$ npm install
+```
+
+## Project Setup and Execution
+
+### Start the back-end implementation
+
+```
+$ cd ../Reactivities/API
+$ dotnet run
+```
+
+### Start the front-end implementation
+
+In the 'client-app' project directory, you can run the React app:
+
+```
+$ cd Reactivities\client-app
+$ npm start
+```
+
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
